@@ -12,6 +12,6 @@ public interface ApiConexiones {
     @GET("/albums")
     Call<ArrayList<Album>> getAlbums();
 
-    
+
 
 }
