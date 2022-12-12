@@ -3,11 +3,14 @@ package com.example.sharedpreferentes.retrofit_ejemplo;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.sharedpreferentes.retrofit_ejemplo.adapters.AlbumsAdapter;
 import com.example.sharedpreferentes.retrofit_ejemplo.conexiones.ApiConexiones;
 import com.example.sharedpreferentes.retrofit_ejemplo.conexiones.RetrofitObject;
 import com.example.sharedpreferentes.retrofit_ejemplo.databinding.ActivityMainBinding;
@@ -15,6 +18,7 @@ import com.example.sharedpreferentes.retrofit_ejemplo.models.Album;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,12 +29,23 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    private List<Album> albumList;
+    private AlbumsAdapter adapter;
+    private RecyclerView.LayoutManager lm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        albumList = new ArrayList<>();
+        adapter = new AlbumsAdapter(albumList, R.layout.album_view_holder, this);
+        lm = new LinearLayoutManager(this);
+
+        binding.contentMain.contenedor.setAdapter(adapter);
+        binding.contentMain.contenedor.setLayoutManager(lm);
 
         doGetAlbums();
 
@@ -55,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<Album>> call, Response<ArrayList<Album>> response) {
                 if (response.code() == HttpURLConnection.HTTP_OK){
                     ArrayList<Album> albums1 = response.body();
+                    assert albums1 != null;
+                    albumList.addAll(albums1);
+                    adapter.notifyItemRangeInserted(0, albums1.size());
                     for (Album a : albums1) {
                         Log.d("ALBUM", "onResponse: " + a.toString());
                     }
