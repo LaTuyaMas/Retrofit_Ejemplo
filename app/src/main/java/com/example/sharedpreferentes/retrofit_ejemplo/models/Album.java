@@ -41,4 +41,13 @@ public class Album {
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
+
+    @Override
+    public String toString() {
+        return "Album{" +
+                "userId=" + userId +
+                ", id=" + id +
+                ", titulo='" + titulo + '\'' +
+                '}';
+    }
 }
