@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     Album a = new Album();
                     a.setTitulo(txtTitulo.getText().toString());
                     a.setUserId(1);
-                    guardarAlbumApi(a);
+                    guardarAlbumApiForm(a);
                 }
             }
         });

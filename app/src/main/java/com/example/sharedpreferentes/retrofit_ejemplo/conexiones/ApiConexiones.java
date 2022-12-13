@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -29,6 +30,7 @@ public interface ApiConexiones {
     @POST("/albums")
     Call<Album> postAlbumCreate(@Body Album album);
 
+    @FormUrlEncoded
     @POST("/albums")
     Call<Album> postAlbumCreateForm(@Field("userId") int userId, @Field("title") String title);
 }
