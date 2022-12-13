@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiConexiones {
@@ -17,4 +18,7 @@ public interface ApiConexiones {
     @GET("/photos?")
     Call<ArrayList<Photo>> getPhotosAlbum(@Query("albumId") String albumId);
 
+    // Parámetros dentro del PATH
+    @GET("/albums/{albumId}/photos")
+    Call<ArrayList<Photo>> getPhotosAlbumPath(@Path("albumId") String albumId);
 }
