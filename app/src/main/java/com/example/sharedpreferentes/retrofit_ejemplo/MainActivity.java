@@ -1,13 +1,16 @@
 package com.example.sharedpreferentes.retrofit_ejemplo;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sharedpreferentes.retrofit_ejemplo.adapters.AlbumsAdapter;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                createAlbumDialog().show();
             }
         });
     }
@@ -86,6 +89,53 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<ArrayList<Album>> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "ERROR, NO TIENES INTERNET", Toast.LENGTH_SHORT).show();
                 Log.e("FAILURE", t.getLocalizedMessage());
+            }
+        });
+    }
+
+    private AlertDialog createAlbumDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Album");
+        builder.setCancelable(false);
+        EditText txtTitulo = new EditText(this);
+        builder.setView(txtTitulo);
+
+        builder.setNegativeButton("Cancelar", null);
+        builder.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (!txtTitulo.getText().toString().isEmpty()){
+                    Album a = new Album();
+                    a.setTitulo(txtTitulo.getText().toString());
+                    a.setUserId(1);
+                    guardarAlbumApi(a);
+                }
+            }
+        });
+
+        return builder.create();
+    }
+
+    private void guardarAlbumApi(Album a) {
+        Retrofit retrofit = RetrofitObject.getConexion();
+        ApiConexiones api = retrofit.create(ApiConexiones.class);
+        Call<Album> doCreateAlbum = api.postAlbumCreate(a);
+
+        doCreateAlbum.enqueue(new Callback<Album>() {
+            @Override
+            public void onResponse(Call<Album> call, Response<Album> response) {
+                if (response.code() == HttpURLConnection.HTTP_CREATED){
+                    albumList.add(0, response.body());
+                    adapter.notifyItemInserted(0);
+                }
+                else {
+                    Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Album> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
