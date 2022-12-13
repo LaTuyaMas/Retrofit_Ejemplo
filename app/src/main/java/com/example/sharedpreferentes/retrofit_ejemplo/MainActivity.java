@@ -139,4 +139,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void guardarAlbumApiForm(Album a) {
+        Retrofit retrofit = RetrofitObject.getConexion();
+        ApiConexiones api = retrofit.create(ApiConexiones.class);
+        Call<Album> doCreateAlbum = api.postAlbumCreateForm(a.getUserId(), a.getTitulo());
+
+        doCreateAlbum.enqueue(new Callback<Album>() {
+            @Override
+            public void onResponse(Call<Album> call, Response<Album> response) {
+                if (response.code() == HttpURLConnection.HTTP_CREATED){
+                    albumList.add(0, response.body());
+                    adapter.notifyItemInserted(0);
+                }
+                else {
+                    Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Album> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
