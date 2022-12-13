@@ -6,7 +6,9 @@ import com.example.sharedpreferentes.retrofit_ejemplo.models.Photo;
 import java.util.ArrayList;
 
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -33,4 +35,8 @@ public interface ApiConexiones {
     @FormUrlEncoded
     @POST("/albums")
     Call<Album> postAlbumCreateForm(@Field("userId") int userId, @Field("title") String title);
+
+    @DELETE("/albums/{albumId}")
+    Call<Void> deleteAlbum(@Path("albumId") String albumId);
+
 }

@@ -1,5 +1,6 @@
 package com.example.sharedpreferentes.retrofit_ejemplo;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharedpreferentes.retrofit_ejemplo.adapters.AlbumsAdapter;
@@ -159,6 +161,47 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Album> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    public AlertDialog deleteAlbumDialog(Album a, int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Album");
+        builder.setCancelable(false);
+        TextView lblMensage = new TextView(this);
+        lblMensage.setText("¿Seguro que quieres borrar este album?");
+        builder.setView(lblMensage);
+
+        builder.setNegativeButton("Cancelar", null);
+        builder.setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                borrarAlbum(a, position);
+            }
+        });
+
+        return builder.create();
+    }
+
+    private void borrarAlbum(Album a, int position) {
+        Retrofit retrofit = RetrofitObject.getConexion();
+        ApiConexiones api = retrofit.create(ApiConexiones.class);
+        Call<Void> deleteAlbum = api.deleteAlbum(String.valueOf(a.getId()));
+
+        deleteAlbum.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == HttpURLConnection.HTTP_OK){
+                    albumList.remove(position);
+                    adapter.notifyItemRemoved(position);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });

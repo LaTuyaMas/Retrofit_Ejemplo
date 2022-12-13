@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sharedpreferentes.retrofit_ejemplo.MainActivity;
 import com.example.sharedpreferentes.retrofit_ejemplo.PhotosActivity;
 import com.example.sharedpreferentes.retrofit_ejemplo.R;
 import com.example.sharedpreferentes.retrofit_ejemplo.models.Album;
@@ -22,11 +24,13 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumVH> {
     private final List<Album> objects;
     private final int resources;
     private final Context context;
+    private final MainActivity main;
 
     public AlbumsAdapter(List<Album> objects, int resources, Context context) {
         this.objects = objects;
         this.resources = resources;
         this.context = context;
+        this.main = (MainActivity) context;
     }
 
     @NonNull
@@ -54,6 +58,13 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumVH> {
                 context.startActivity(intent);
             }
         });
+
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                main.deleteAlbumDialog(a, holder.getAdapterPosition()).show();
+            }
+        });
     }
 
     @Override
@@ -64,10 +75,12 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumVH> {
     public class AlbumVH extends RecyclerView.ViewHolder {
 
         TextView lblTitle;
+        ImageButton btnDelete;
 
         public AlbumVH(@NonNull View itemView) {
             super(itemView);
             lblTitle = itemView.findViewById(R.id.lblTitle);
+            btnDelete = itemView.findViewById(R.id.btnDeleteAlbum);
         }
     }
 }
